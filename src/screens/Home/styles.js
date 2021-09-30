@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 
 export const Container = styled.SafeAreaView`
     background-color: #141A29;
@@ -27,5 +27,26 @@ export const SearchButton = styled.TouchableOpacity`
     height: 50px;
     align-items: center;
     justify-content: center;
+`;
+
+export const Title = styled.Text`
+    padding: 20px 14px 8px 14px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+
+`;
+
+export const BannerButton = styled.TouchableOpacity``;
+
+export const Banner = styled.Image`
+    height: 150px;
+    border-radius: 6px;
+    margin: 0 14px;
+`;
+
+export const SliderMovie = styled.FlatList`
+    height: 250px;
+    padding: 0 14px;
 `;
 

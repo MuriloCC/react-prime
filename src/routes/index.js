@@ -23,7 +23,8 @@ export function Routes(){
             }}
         
         >
-            <Screen name="HomeDrawer"
+            <Screen 
+                name="HomeDrawer"
                 component={StackRoutes}
                 options={{
                     title: 'Home',
@@ -36,7 +37,8 @@ export function Routes(){
                     )
                 }}
             />
-            <Screen name="Movies" 
+            <Screen 
+                name="Movies" 
                 component={Movies}
                 options={{
                     title: "Meus Filmes",
