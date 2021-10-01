@@ -10,16 +10,16 @@ import {
 
 import { Ionicons } from '@expo/vector-icons'
 
-export function SliderItem(){
+export function SliderItem({ data, navigatePage }){
     return(
-        <Container activeOpacity={0.7}>
+        <Container activeOpacity={0.7} onPress={() => navigatePage(data)}>
             <BannerItem 
-                source={{ uri: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1025&q=80' }}
+                source={{ uri: `https://image.tmdb.org/t/p/original/${data.poster_path}` }}
             />
-            <Title numberOfLines={1}>Homi Aranha Vingadores chupa cu</Title>
+            <Title numberOfLines={1}>{data.title}</Title>
             <RateContainer>
                 <Ionicons name="md-star" size={12} color="#E7A74E" />
-                <Rate>1.2</Rate>
+                <Rate>{data.vote_average}/10</Rate>
             </RateContainer>
         </Container>
     );

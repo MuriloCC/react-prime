@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons';
-import { ScrollView } from 'react-native';
+import { ScrollView, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native'
 
 import { api, key } from '../../services/api'
-
+import { getListMovies, randomBanner } from '../../utils/movie';
 import { 
     Container,
     SearchContainer, 
@@ -20,24 +21,80 @@ import { SliderItem } from '../../components/SliderItem';
 
 export function Home(){
     const [nowMovies, setNowMovies] = useState([]);
+    const [popularMovies, setPopularMovies] = useState([]);
+    const [topMovies, setTopMovies] = useState([]);
+
+    const [bannerMovie, setBannerMovie] = useState({});
+
+    const [loading, setLoading] = useState(true);
+
+    const navigation = useNavigation();
 
     useEffect(() => {
         let isActive = true;
+        const ac = new AbortController();
 
         async function getMovies(){
-            const response = await api.get('/movie/now_playing', {
-                params: {
-                    api_key: key,
-                    language: 'pt-BR',
-                    page: 1,
-                }
-            });
-            console.log(response.data);
+            const [nowData, popularData, topData] = await Promise.all([
+                api.get('/movie/now_playing', {
+                    params: {
+                        api_key: key,
+                        language: 'pt-BR',
+                        page: 1,
+                    }
+                }),
+                api.get('/movie/popular', {
+                    params: {
+                        api_key: key,
+                        language: 'pt-BR',
+                        page: 1,
+                    }
+                }),
+                api.get('/movie/top_rated', {
+                    params: {
+                        api_key: key,
+                        language: 'pt-BR',
+                        page: 1,
+                    }
+                }),
+            ]);
+            
+
+            if(isActive){
+                const nowList = getListMovies(10, nowData.data.results);
+                const popularList = getListMovies(5, popularData.data.results);
+                const topList = getListMovies(5, topData.data.results);
+                setNowMovies(nowList);
+                setPopularMovies(popularList);
+                setTopMovies(topList);
+                setBannerMovie(nowData.data.results[randomBanner(nowData.data.results)]);
+                
+                setLoading(false);
+            }
+            
         }
 
         getMovies();
+
+        return () => {
+            isActive = false;
+            ac.abort();
+        }
     }, []);
 
+    function navigateDetailsPage(item){
+        navigation.navigate('Details', {
+            id: item.id
+        });
+    }
+
+    if(loading){
+        return(
+            <Container>
+                <ActivityIndicator size="large" color="#fff" />
+            </Container>
+        )
+    }
     return(
         <Container>
             <Header title="React Prime" />
@@ -58,37 +115,43 @@ export function Home(){
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Title>Em cartaz</Title>
+
                 <BannerButton
                     activeOpacity={0.7}
-                    onPress={() => alert("teste")}
+                    onPress={() => navigateDetailsPage(bannerMovie)}
                 >
                     <Banner
                         resizeMethod="resize" 
-                        source={{ uri: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1025&q=80' }}
+                        source={{uri: `https://image.tmdb.org/t/p/original/${bannerMovie.poster_path}`}}
                     />
                 </BannerButton>
 
                 <SliderMovie 
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    data={[1, 2, 3, 4]}
-                    renderItem={({ item }) => <SliderItem />}
+                    data={nowMovies}
+                    renderItem={({ item }) => <SliderItem data={item} navigatePage={() => navigateDetailsPage(item)} />}
+                    keyExtractor={item => String(item.id)}
                 />
 
                 <Title>Populares</Title>
+
                 <SliderMovie 
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    data={[1, 2, 3, 4]}
-                    renderItem={({ item }) => <SliderItem />}
+                    data={popularMovies}
+                    renderItem={({ item }) => <SliderItem data={item} navigatePage={() => navigateDetailsPage(item)} />}
+                    keyExtractor={item => String(item.id)}
                 />
 
                 <Title>Mais Votados</Title>
+
                 <SliderMovie 
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    data={[1, 2, 3, 4]}
-                    renderItem={({ item }) => <SliderItem />}
+                    data={topMovies}
+                    renderItem={({ item }) => <SliderItem data={item} navigatePage={() => navigateDetailsPage(item)} />}
+                    keyExtractor={item => String(item.id)}
                 />
             </ScrollView>
         </Container>
