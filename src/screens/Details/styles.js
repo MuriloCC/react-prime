@@ -1,3 +1,4 @@
+import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
@@ -5,7 +6,6 @@ export const Container = styled.View`
     background-color: #191a30;
 
 `;
-export const Title = styled.Text``;
 export const Header = styled.View`
     z-index: 99;
     position: absolute;
@@ -27,7 +27,53 @@ export const HeaderButton = styled.TouchableOpacity`
 `;
 
 export const Banner = styled.Image`
-    
+    width: 100%;
+    height: 350px;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+`;
 
+export const ButtonLink = styled.TouchableOpacity`
+    background-color: #E72F49;
+    width: 63px;
+    height: 63px;
+    border-radius: 35px;
+    position: absolute;
+    top: 300px;
+    right: 15px;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+`;
 
+export const Title = styled.Text`
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 8px 14px;
+`;
+
+export const ContentArea = styled.View`
+    flex-direction: row;
+    align-items: center;
+    padding: 0 14px;
+    justify-content: space-between;
+`;
+export const Rate = styled.Text`
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+`;
+
+export const ListGenres = styled.FlatList`
+    padding-left: 14px;
+    margin: 8px 0;
+    max-height: 35px;
+    min-height: 35px;
+`;
+
+export const Description = styled.Text`
+    padding: 0 14px 30px 14px;
+    color: #fff;
+    line-height: 20px;
 `;
