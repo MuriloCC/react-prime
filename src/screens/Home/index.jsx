@@ -26,6 +26,8 @@ export function Home(){
 
     const [bannerMovie, setBannerMovie] = useState({});
 
+    const [input, setInput] = useState('');
+
     const [loading, setLoading] = useState(true);
 
     const navigation = useNavigation();
@@ -88,6 +90,14 @@ export function Home(){
         });
     }
 
+    function handleSearchMovie(){
+        if(input === '') return;
+        navigation.navigate('Search', {
+            name: input,
+        });
+        setInput('');
+    }
+
     if(loading){
         return(
             <Container>
@@ -102,9 +112,13 @@ export function Home(){
                 <Input
                     placeholder="Ex:. Vingadores Ultimato"
                     placeholderTextColor={"#ddd"}
+                    value={input}
+                    onChangeText={text => setInput(text)}
                 />
 
-                <SearchButton>
+                <SearchButton
+                    onPress={handleSearchMovie}
+                >
                     <Feather
                         name="search"
                         size={30}

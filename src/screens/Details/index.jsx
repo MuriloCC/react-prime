@@ -22,12 +22,16 @@ import { api, key } from '../../services/api';
 import { Genres } from '../../components/Genres';
 import { ModalLink } from '../../components/ModalLink';
 
+import { saveMovie, hasMovie, deleteMovie } from '../../utils/storage';
+
 export function Details(){
     const navigation = useNavigation();
     const route = useRoute();
 
     const [movie, setMovie] = useState({});
     const [openLink, setOpenLink] = useState(false);
+
+    const [favoriteMovie, setFavoriteMovie] = useState(false);
 
     useEffect(() => {
         let isActive = true;
@@ -43,6 +47,8 @@ export function Details(){
 
             if(isActive){
                 setMovie(response.data);
+                const isFavorite = await hasMovie(response.data);
+                setFavoriteMovie(isFavorite);
             }
         }
 
@@ -52,6 +58,19 @@ export function Details(){
         
         return () => isActive = false;
     }, [])
+
+    async function handleFavoriteMovie(movie){
+        if(favoriteMovie){
+            await deleteMovie(movie.id)
+            setFavoriteMovie(false);
+            alert('filme excluido!!!!');
+            return;
+        }
+        await saveMovie('@murasprime', movie);
+        setFavoriteMovie(true);
+        alert('filme salvo!!!!!');
+    }
+
     return(
         <Container>
             <Header>
@@ -66,12 +85,24 @@ export function Details(){
                         color="#fff" 
                     />
                 </HeaderButton>
-                <HeaderButton activeOpacity={0.7}>
-                    <Ionicons 
-                        name="bookmark" 
-                        size={28} 
-                        color="#fff" 
-                    />
+
+                <HeaderButton 
+                    activeOpacity={0.7}
+                    onPress={() => handleFavoriteMovie(movie)}
+                >
+                    {favoriteMovie ? (
+                        <Ionicons 
+                            name="bookmark" 
+                            size={28} 
+                            color="#fff" 
+                        />
+                    ) : (
+                        <Ionicons 
+                            name="bookmark-outline" 
+                            size={28} 
+                            color="#fff" 
+                        />
+                    )}
                 </HeaderButton>
             </Header>
 
